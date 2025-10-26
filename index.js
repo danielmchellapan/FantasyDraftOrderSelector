@@ -77,6 +77,13 @@ generatePlayerNameInput(12);
 
 function submitPlayerNames()
 {
+    const isValid = validatePlayerNames(); 
+
+    if(!isValid)
+    {
+        return; 
+    }
+    
     collectPlayerNames();
     
     displayPlayerNames();
@@ -84,6 +91,40 @@ function submitPlayerNames()
     randomizePlayerDraftOrder();
 
     displayRandomizedOrder();
+}
+
+function validatePlayerNames()
+{
+    const getNames = document.getElementsByClassName("playerNames");
+    let validPattern = /^[A-Za-z\s]+$/;
+    const seenNames = new Set();
+
+
+    for(let i = 0; i < getNames.length; i++)
+    {
+        let currentName = getNames[i].value.trim(); 
+        if(currentName === "")
+        {
+            alert("value entered is empty");
+            return false; 
+        }
+        
+        if(!validPattern.test(currentName))
+        {
+            alert(`"${currentName}" contains invalid characters`);
+            return false; 
+        }
+        
+        if(seenNames.has(currentName.toLowerCase()))
+        {
+            alert(`Duplicate name found: ${currentName}`);
+            return false; 
+        }
+
+        seenNames.add(currentName.toLowerCase());
+    }
+
+    return true; 
 }
 
 
