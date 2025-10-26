@@ -1,52 +1,51 @@
-let numberOfplayers = 0; 
+const minPlayers = 2; 
 
-const min = 0; 
+const maxPlayers = 20; 
 
-const max = 20; 
-
-let playerList = []; 
-
-function getUserInput()
+function handleNumberOfPlayers()
 {
     let inputElement = document.getElementById("amountPlayers");
     let inputValue = inputElement.value.trim();
-    numberOfplayers = Number(inputValue);
-    console.log(numberOfplayers);
+    const numberOfPlayers = Number(inputValue);
+    if(!validateNumberOfPlayers(numberOfPlayers)) return; 
+
+    generatePlayerNameInput(numberOfPlayers);
 }
 
-function validate()
+function validateNumberOfPlayers(number)
 {
-    
-    let inputElement = document.getElementById("amountPlayers");
-    let inputValue = inputElement.value.trim();
-    numberOfplayers = Number(inputValue);
-  
-    if(inputValue === "")
+    if (number === 0 || number === "") 
     {
-        alert("value entered is empty");
+        alert("Value entered is empty");
+        return false;
     }
-    else if(isNaN(numberOfplayers))
+
+    if (isNaN(number)) 
     {
         alert("Number entered is not a number");
+        return false;
     }
-    else if(!(Number.isInteger(numberOfplayers)))
+
+    if (!Number.isInteger(number) || number < minPlayers) 
     {
-        alert("Please enter a whole number that is not negative");
+        alert(`Please enter a whole number greater than or equal to ${minPlayers}`);
+        return false;
     }
-    else if(numberOfplayers <= min || numberOfplayers > max)
+
+    if (number > maxPlayers) 
     {
-        alert(`Please enter a number between ${min} and ${max}`)
+        alert(`Please enter a number less than or equal to ${maxPlayers}`);
+        return false;
     }
-    else if(numberOfplayers % 2 === 1)
+
+    if (number % 2 === 1) 
     {
         alert("Please enter an even number");
+        return false;
     }
-    else
-    {
-        console.log(numberOfplayers);
-    }
-}
 
+    return true;
+}
 
 function generatePlayerNameInput(numberOfPlayers)
 {
@@ -70,42 +69,40 @@ function generatePlayerNameInput(numberOfPlayers)
 
         container.appendChild(label); 
         container.appendChild(input);
+        container.appendChild(br);
     }
+
+    const submitButton = document.createElement("button");
+    submitButton.textContent = "Submit Player Names";
+    submitButton.onclick = () => handleSubmitPlayerNames(container);
+    container.appendChild(submitButton);
 }
 
-generatePlayerNameInput(12);
-
-function submitPlayerNames()
+function handleSubmitPlayerNames(container) 
 {
-    const isValid = validatePlayerNames(); 
+    const inputs = container.getElementsByClassName("playerNames");
 
-    if(!isValid)
-    {
-        return; 
-    }
-    
-    collectPlayerNames();
-    
-    displayPlayerNames();
+    if(!validatePlayerNames(inputs)) return; 
 
-    randomizePlayerDraftOrder();
+    const playerList = collectPlayerNames(inputs);
+    displayPlayerNames(playerList);
 
-    displayRandomizedOrder();
+    const randomizedList = randomizePlayerDraftOrder([...playerList]);
+    displayRandomizedOrder(randomizedList);
 }
 
-function validatePlayerNames()
+function validatePlayerNames(inputs)
 {
-    const getNames = document.getElementsByClassName("playerNames");
     let validPattern = /^[A-Za-z\s]+$/;
     const seenNames = new Set();
 
 
-    for(let i = 0; i < getNames.length; i++)
+    for(let i = 0; i < inputs.length; i++)
     {
-        let currentName = getNames[i].value.trim(); 
+        let currentName = inputs[i].value.trim(); 
         if(currentName === "")
         {
-            alert("value entered is empty");
+            alert("Player names cannot be empty");
             return false; 
         }
         
@@ -128,60 +125,48 @@ function validatePlayerNames()
 }
 
 
-function collectPlayerNames()
+function collectPlayerNames(inputs)
 {
-    let playNames = document.getElementsByClassName("playerNames");
+    return Array.from(inputs).map(input => input.value.trim());
+}
 
-    playerList = []; 
 
-    for(let i = 0; i < playNames.length; i++)
+function displayPlayerNames(playerList)
+{
+    let displayNamesContainer = document.getElementById("draftOrder");
+    displayNamesContainer.innerHTML = "";
+    playerList.forEach((name, index) => 
     {
-        playerList.push(playNames[i].value); 
+        const li = document.createElement("li");
+        li.textContent = `${index + 1}. ${name}`;
+        displayNamesContainer.appendChild(li);
+    }); 
+}
+
+//Fisher-Yates-Shuffle
+function randomizePlayerDraftOrder(playerList)
+{
+    for(let i = playerList.length - 1; i > 0; i--)
+    {
+        const indexJ = Math.floor((Math.random() * (i + 1)));
+        
+        [playerList[i], playerList[indexJ]] = [playerList[indexJ], playerList[i]]; 
     }
 
     return playerList; 
 }
 
 
-function displayPlayerNames()
+function displayRandomizedOrder(playerList)
 {
-    let displayNamesContainer = document.getElementById("draftOrder");
-
-    displayNamesContainer.innerHTML = "";
-
-    for(let i = 0; i < playerList.length; i++)
-    {
-        let playerUnorderedName = document.createElement("li");
-        playerUnorderedName.textContent = `${i + 1}. ${playerList[i]}`;
-
-        displayNamesContainer.append(playerUnorderedName);
-    }
-
-}
-
-//Fisher-Yates-Shuffle
-function randomizePlayerDraftOrder()
-{
-    for(let i = playerList.length - 1; i > 0; i--)
-    {
-        let indexJ = Math.floor((Math.random() * (i + 1)));
-        
-        [playerList[i], playerList[indexJ]] = [playerList[indexJ], playerList[i]]; 
-    }
-}
-
-
-function displayRandomizedOrder()
-{
-    let randomizedDisplayContainer = document.getElementById("draftOrderRandomized");
+    const randomizedDisplayContainer = document.getElementById("draftOrderRandomized");
 
     randomizedDisplayContainer.innerHTML = "";
 
-    for(let i = 0; i < playerList.length; i++)
+    playerList.forEach((name, index) =>
     {
-        let playerRandomizedName = document.createElement("li");
-        playerRandomizedName.textContent = `${i + 1}. ${playerList[i]}`;
-
-        randomizedDisplayContainer.append(playerRandomizedName);        
-    }
+        const li = document.createElement("li");
+        li.textContent = `${index + 1}. ${name}`;
+        randomizedDisplayContainer.appendChild(li);
+    });
 }

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="index.css">
-    <title>Document</title>
+    <title>Player Draft</title>
 </head>
 <body>
     <nav>
@@ -24,12 +24,12 @@
     <section>
         <label for="amountPlayers">Amount of players</label>
         <input type="number" id="amountPlayers" name="playersAmount">
-        <button onclick="validate()">Save</button>
+        <button onclick="handleNumberOfPlayers()">Save</button>
     </section>
 
     <section>
         <div id="playerInputs"></div>
-        <button onclick="submitPlayerNames()">Submit</button>
+        <!-- The submit button for player names will be dynamically created by JS -->
     </section>
 
     <section>
@@ -44,6 +44,6 @@
         <ul id="draftOrderRandomized"></ul>
     </section>
 
-</body>
     <script src="index.js"></script>
+</body>
 </html>
