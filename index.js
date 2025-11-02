@@ -2,13 +2,13 @@ const minPlayers = 2;
 
 const maxPlayers = 20; 
 
+//fn
 function handleNumberOfPlayers()
 {
     let inputElement = document.getElementById("amountPlayers");
     let inputValue = inputElement.value.trim();
     const numberOfPlayers = Number(inputValue);
     if(!validateNumberOfPlayers(numberOfPlayers)) return; 
-
     generatePlayerNameInput(numberOfPlayers);
 }
 
