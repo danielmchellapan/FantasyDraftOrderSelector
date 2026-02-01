@@ -20,3 +20,15 @@ async function loginUser(credentials)
         console.error("Error during login:", error);
     }
 }
+
+document.getElementById("loginForm").addEventListener("submit", async (event) => {
+    // 1. Prevent the default form submission (page reload)
+    event.preventDefault();
+
+    // 2. Collect data from the input fields
+    const username = event.target.username.value;
+    const password = event.target.password.value;
+
+    // 3. Call your async function
+    await loginUser({ username, password });
+});
